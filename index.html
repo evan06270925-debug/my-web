@@ -3,13 +3,573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>汪星人俱樂部 🐾 | 我們的自我介紹</title>
+    <title>汪星人俱樂部 🐾 | 可愛小狗自我介紹與互動平台</title>
+    
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- 引入 Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" …                }, 400); // 對應 CSS 動畫時間
-            }, 3000);
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Fredoka', sans-serif;
+            background-color: #fffbeb;
+            background-image: radial-gradient(#fde68a 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
         }
+
+        /* 飄浮背景爪印動畫 */
+        .floating-paw {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.15;
+            animation: floatUp 12s infinite linear;
+            z-index: 0;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.2; }
+            80% { opacity: 0.2; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* 卡片懸停立體效果 */
+        .dog-card {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dog-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 30px -10px rgba(217, 119, 6, 0.2);
+        }
+
+        /* 噴發愛心顆粒動畫 */
+        .particle-heart {
+            position: absolute;
+            pointer-events: none;
+            animation: heartBurst 0.8s ease-out forwards;
+            font-size: 1.5rem;
+            z-index: 30;
+        }
+
+        @keyframes heartBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+            100% { opacity: 0; transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(1.5) rotate(var(--tw-rotate)); }
+        }
+
+        /* 自訂 Toast 提示動畫 */
+        .toast-enter {
+            animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .toast-exit {
+            animation: fadeOutDown 0.3s ease-in forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translate(-50%, 100%); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        @keyframes fadeOutDown {
+            from { opacity: 1; transform: translate(-50%, 0); }
+            to { opacity: 0; transform: translate(-50%, 100%); }
+        }
+
+        /* Modal 動畫 */
+        .modal-bg {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col relative overflow-x-hidden selection:bg-amber-200">
+
+    <!-- 飄浮爪印背景背景 -->
+    <div class="floating-paw text-amber-600 text-4xl" style="left: 10%; animation-delay: 0s;">🐾</div>
+    <div class="floating-paw text-amber-600 text-5xl" style="left: 30%; animation-delay: 3s;">🐾</div>
+    <div class="floating-paw text-amber-600 text-3xl" style="left: 60%; animation-delay: 6s;">🐾</div>
+    <div class="floating-paw text-amber-600 text-6xl" style="left: 85%; animation-delay: 9s;">🐾</div>
+
+    <!-- 頂部頁首導覽 -->
+    <header class="pt-10 pb-6 px-4 text-center relative z-10">
+        <div class="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-5 py-2 rounded-full font-bold text-sm tracking-wide shadow-sm border border-amber-200 mb-4 animate-bounce">
+            <span>🐾</span> 2026 汪星人萌寵大會
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-amber-900 tracking-tight mb-3 drop-shadow-sm">
+            汪星人自我介紹 🐶
+        </h1>
+        <p class="text-amber-800 max-w-xl mx-auto font-medium text-base md:text-lg">
+            歡迎來到狗狗的小世界！點擊卡片認識牠們的脾氣，或是送罐罐給可愛的汪星人吧！
+        </p>
+
+        <!-- 統計數據總覽 -->
+        <div class="flex justify-center gap-6 mt-6">
+            <div class="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-amber-200 shadow-sm flex items-center gap-2">
+                <span class="text-2xl">🐶</span>
+                <div class="text-left">
+                    <div class="text-xs text-gray-500 font-bold">汪星成員</div>
+                    <div class="text-lg font-black text-amber-800" id="total-dogs-count">8 隻</div>
+                </div>
+            </div>
+            <div class="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-amber-200 shadow-sm flex items-center gap-2">
+                <span class="text-2xl">🥫</span>
+                <div class="text-left">
+                    <div class="text-xs text-gray-500 font-bold">已送出罐罐</div>
+                    <div class="text-lg font-black text-amber-800" id="total-treats-count">0 個</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 搜尋與篩選列 -->
+    <section class="container mx-auto px-4 mb-8 relative z-10 max-w-5xl">
+        <div class="bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-md border border-amber-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <!-- 搜尋框 -->
+            <div class="relative w-full md:w-72">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                    🔍
+                </span>
+                <input type="text" id="search-input" oninput="filterDogs()" placeholder="搜尋狗狗名字、品種..." 
+                    class="w-full pl-10 pr-4 py-2.5 bg-amber-50/50 border border-amber-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all">
+            </div>
+
+            <!-- 分類標籤頁 -->
+            <div class="flex flex-wrap gap-2 justify-center w-full md:w-auto" id="filter-tags">
+                <button onclick="setFilter('all')" class="filter-btn active bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all hover:bg-amber-600">
+                    全部狗狗 ✨
+                </button>
+                <button onclick="setFilter('短腿')" class="filter-btn bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:bg-amber-200">
+                    腿短萌爆 🌭
+                </button>
+                <button onclick="setFilter('聰明')" class="filter-btn bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:bg-amber-200">
+                    智商高高 🧠
+                </button>
+                <button onclick="setFilter('毛蓬蓬')" class="filter-btn bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:bg-amber-200">
+                    蓬鬆羽絨 ☁️
+                </button>
+                <button onclick="setFilter('個性派')" class="filter-btn bg-amber-100 text-amber-800 px-4 py-2 rounded-xl text-sm font-bold transition-all hover:bg-amber-200">
+                    傲嬌迷人 😼
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 狗狗卡片展示區 -->
+    <main class="flex-grow container mx-auto px-4 pb-20 relative z-10 max-w-6xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="dog-grid">
+            <!-- 由 JavaScript 動態繪製卡片，保證功能與響應式彈性 -->
+        </div>
+
+        <!-- 找不到搜尋結果時顯示 -->
+        <div id="no-results" class="hidden text-center py-16">
+            <div class="text-6xl mb-3">🔍🐶</div>
+            <h3 class="text-xl font-bold text-gray-700">找不到符合條件的汪星人</h3>
+            <p class="text-gray-500 mt-1">試試看輸入其他關鍵字吧！</p>
+        </div>
+    </main>
+
+    <!-- 狗狗詳細檔案 Pop-up Modal -->
+    <div id="dog-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none modal-bg transition-opacity duration-300">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative z-10 transform scale-90 modal-content border-4 border-amber-200 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-amber-100 hover:bg-amber-200 text-amber-800 w-9 h-9 rounded-full font-bold flex items-center justify-center transition-colors">
+                ✕
+            </button>
+            <div id="modal-body">
+                <!-- 動態注入 Modal 內容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁尾 -->
+    <footer class="bg-amber-900 text-amber-200 py-8 text-center relative z-10 mt-auto rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+        <p class="font-bold text-base mb-1">🐾 2026 汪星人自我介紹俱樂部</p>
+        <p class="text-xs text-amber-400/80">愛牠就請陪伴牠一輩子！領養代替購買 ❤️</p>
+    </footer>
+
+    <!-- Toast 提示視窗容器 -->
+    <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-full max-w-xs px-4"></div>
+
+    <!-- JavaScript 腳本區塊 -->
+    <script>
+        // --- 1. Web Audio API 音效合成器 (不需加載外部 mp3) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'pet') {
+                // 可愛的高音 Pop 聲
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'treat') {
+                // 叮噹兩聲雙音
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+
+        // --- STREAMING_CHUNK:Configuring dogs database with SVGs... ---
+        // 2. 狗狗完整資料庫 (搭配精美向量 SVG 畫像，確保 100% 成功繪製)
+        const dogsData = [
+            {
+                id: 'corgi',
+                name: '噗噗',
+                breed: '潘布魯克威爾斯柯基犬',
+                tags: ['短腿', '個性派'],
+                bgGradient: 'from-amber-200 to-orange-300',
+                badgeBg: 'bg-amber-500',
+                badgeText: '短腿界霸主',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M25 30 L15 10 L38 22 Z" fill="#d97706"/><path d="M75 30 L85 10 L62 22 Z" fill="#d97706"/><circle cx="50" cy="55" r="35" fill="#f59e0b"/><ellipse cx="50" cy="62" rx="20" ry="15" fill="#ffffff"/><circle cx="38" cy="48" r="4" fill="#292524"/><circle cx="62" cy="48" r="4" fill="#292524"/><ellipse cx="50" cy="56" rx="5" ry="3.5" fill="#1c1917"/><path d="M46 62 Q50 66 54 62" stroke="#1c1917" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="32" cy="56" rx="5" ry="3" fill="#f43f5e" opacity="0.4"/><ellipse cx="68" cy="56" rx="5" ry="3" fill="#f43f5e" opacity="0.4"/></svg>`,
+                intro: '嗨！我是噗噗！我的腿雖然短，但屁股超級彈！最喜歡在草地上爆衝，然後開心地曬曬我那像烤吐司一樣的迷人背影～',
+                treats: 0,
+                stats: { cuteness: 98, energy: 95, barking: 60, intelligence: 85 },
+                tips: '柯基脊椎較長，要注意控制體重不能太胖，且要避免經常爬樓梯喔！'
+            },
+            {
+                id: 'poodle',
+                name: '捲捲',
+                breed: '玩具貴賓犬',
+                tags: ['聰明', '毛蓬蓬'],
+                bgGradient: 'from-pink-200 to-rose-300',
+                badgeBg: 'bg-pink-500',
+                badgeText: '泰迪熊化身',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="28" cy="40" r="14" fill="#b45309"/><circle cx="72" cy="40" r="14" fill="#b45309"/><circle cx="50" cy="52" r="32" fill="#d97706"/><circle cx="38" cy="38" r="10" fill="#d97706"/><circle cx="62" cy="38" r="10" fill="#d97706"/><circle cx="50" cy="35" r="12" fill="#d97706"/><circle cx="40" cy="50" r="3.5" fill="#1c1917"/><circle cx="60" cy="50" r="3.5" fill="#1c1917"/><ellipse cx="50" cy="58" rx="4" ry="3" fill="#1c1917"/><path d="M47 63 Q50 66 53 63" stroke="#1c1917" stroke-width="2" fill="none"/></svg>`,
+                intro: '汪汪！我是捲捲！大家常把我誤認成泰迪熊玩偶。我不只長得卡哇伊，智商在狗界也是數一數二的高喔！',
+                treats: 0,
+                stats: { cuteness: 96, energy: 80, barking: 40, intelligence: 98 },
+                tips: '貴賓犬毛髮捲曲不容易掉毛，但需要定期梳毛避免打結纏繞。'
+            },
+            {
+                id: 'pomeranian',
+                name: '棉花糖',
+                breed: '博美犬',
+                tags: ['毛蓬蓬', '個性派'],
+                bgGradient: 'from-orange-200 to-amber-300',
+                badgeBg: 'bg-orange-500',
+                badgeText: '行走的雲朵',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="38" fill="#ffedd5"/><circle cx="28" cy="25" r="8" fill="#f97316"/><circle cx="72" cy="25" r="8" fill="#f97316"/><circle cx="50" cy="52" r="28" fill="#fff7ed"/><circle cx="38" cy="46" r="4" fill="#1c1917"/><circle cx="62" cy="46" r="4" fill="#1c1917"/><ellipse cx="50" cy="54" rx="4" ry="3" fill="#1c1917"/><path d="M48 60 Q50 63 52 60" stroke="#1c1917" stroke-width="2" fill="none"/></svg>`,
+                intro: '我是棉花糖！別看我小巧玲瓏，我的勇氣可不輸給大狼狗喔！最喜歡討抱抱跟討餅乾吃了～',
+                treats: 0,
+                stats: { cuteness: 99, energy: 85, barking: 88, intelligence: 78 },
+                tips: '博美犬氣管較為敏感脆弱，建議使用胸背帶替代頸圈牽引。'
+            },
+            {
+                id: 'shiba',
+                name: '阿柴',
+                breed: '柴犬',
+                tags: ['個性派'],
+                bgGradient: 'from-amber-300 to-yellow-400',
+                badgeBg: 'bg-yellow-600',
+                badgeText: '表情包巨星',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M22 28 L15 8 L38 20 Z" fill="#b45309"/><path d="M78 28 L85 8 L62 20 Z" fill="#b45309"/><circle cx="50" cy="52" r="34" fill="#d97706"/><path d="M30 65 Q50 35 70 65 Q50 85 30 65" fill="#fef3c7"/><circle cx="38" cy="46" r="4" fill="#1c1917"/><circle cx="62" cy="46" r="4" fill="#1c1917"/><ellipse cx="50" cy="52" rx="4.5" ry="3" fill="#1c1917"/><path d="M46 58 Q50 61 54 58" stroke="#1c1917" stroke-width="2" fill="none"/></svg>`,
+                intro: '哼，本柴叫做阿柴！散步時如果我不想要走，誰也別想拉動我（拒否柴模式開啟）！不過如果你有肉肉，我可以考慮賣萌一下。',
+                treats: 0,
+                stats: { cuteness: 92, energy: 90, barking: 50, intelligence: 82 },
+                tips: '柴犬個性獨立且固執，換毛期掉毛量非常驚人，需要耐心梳理！'
+            },
+            {
+                id: 'dachshund',
+                name: '熱狗',
+                breed: '迷你臘腸犬',
+                tags: ['短腿'],
+                bgGradient: 'from-amber-200 to-stone-300',
+                badgeBg: 'bg-stone-600',
+                badgeText: '超級香腸人',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><ellipse cx="22" cy="48" rx="8" ry="22" fill="#78350f"/><ellipse cx="78" cy="48" rx="8" ry="22" fill="#78350f"/><ellipse cx="50" cy="52" rx="30" ry="26" fill="#92400e"/><ellipse cx="50" cy="60" rx="16" ry="12" fill="#d97706"/><circle cx="38" cy="44" r="3.5" fill="#1c1917"/><circle cx="62" cy="44" r="3.5" fill="#1c1917"/><ellipse cx="50" cy="54" rx="4" ry="3" fill="#1c1917"/><path d="M47 62 Q50 65 53 62" stroke="#1c1917" stroke-width="2" fill="none"/></svg>`,
+                intro: '你看過會走路的香腸嗎？那就是我！我是熱狗，專長是挖洞跟鑽進被窩裡睡覺，我的耳朵超軟超舒服喔！',
+                treats: 0,
+                stats: { cuteness: 90, energy: 75, barking: 70, intelligence: 80 },
+                tips: '臘腸狗天生獵犬直覺強烈，喜歡挖洞與追逐小動物，要注意腰椎保健。'
+            },
+            {
+                id: 'chihuahua',
+                name: '吉度',
+                breed: '吉娃娃',
+                tags: ['個性派'],
+                bgGradient: 'from-purple-200 to-pink-300',
+                badgeBg: 'bg-purple-600',
+                badgeText: '辣椒小巨人',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><polygon points="12,18 35,38 10,48" fill="#a855f7"/><polygon points="88,18 65,38 90,48" fill="#a855f7"/><circle cx="50" cy="54" r="28" fill="#c084fc"/><circle cx="36" cy="50" r="6" fill="#1c1917"/><circle cx="64" cy="50" r="6" fill="#1c1917"/><circle cx="38" cy="48" r="2" fill="#ffffff"/><circle cx="66" cy="48" r="2" fill="#ffffff"/><ellipse cx="50" cy="58" rx="3" ry="2" fill="#1c1917"/><path d="M48 64 Q50 62 52 64" stroke="#1c1917" stroke-width="1.5" fill="none"/></svg>`,
+                intro: '我是吉度！雖然我身體小小的還會抖抖，但我的脾氣可大著呢！誰敢欺負我的主人，我就汪汪凶爆他！',
+                treats: 0,
+                stats: { cuteness: 85, energy: 80, barking: 99, intelligence: 75 },
+                tips: '吉娃娃非常怕冷，冬天天氣變冷時記得幫牠穿上暖呼呼的小衣服喔。'
+            },
+            {
+                id: 'border-collie',
+                name: '閃電',
+                breed: '邊境牧羊犬',
+                tags: ['聰明'],
+                bgGradient: 'from-slate-200 to-slate-400',
+                badgeBg: 'bg-slate-700',
+                badgeText: '狗界智力巔峰',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="52" r="34" fill="#1e293b"/><path d="M35 30 L15 15 L30 45 Z" fill="#1e293b"/><path d="M65 30 L85 15 L70 45 Z" fill="#1e293b"/><path d="M50 30 Q35 55 50 82 Q65 55 50 30" fill="#f8fafc"/><circle cx="38" cy="48" r="4" fill="#334155"/><circle cx="62" cy="48" r="4" fill="#334155"/><ellipse cx="50" cy="56" rx="4.5" ry="3" fill="#0f172a"/></svg>`,
+                intro: '嗨！我是閃電！玩飛盤是我的拿手絕活。我的智商相當於7歲的小朋友，有時候我甚至覺得自己比主人還聰明捏！',
+                treats: 0,
+                stats: { cuteness: 91, energy: 100, barking: 45, intelligence: 100 },
+                tips: '邊境牧羊犬需要極大的運動量與心智刺激（如益智玩具、敏捷訓練）。'
+            },
+            {
+                id: 'samoyed',
+                name: '雲朵',
+                breed: '薩摩耶犬',
+                tags: ['毛蓬蓬'],
+                bgGradient: 'from-sky-100 to-blue-200',
+                badgeBg: 'bg-sky-500',
+                badgeText: '微笑天使',
+                avatarSvg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="38" fill="#ffffff"/><path d="M25 25 L18 8 L38 20 Z" fill="#f1f5f9"/><path d="M75 25 L82 8 L62 20 Z" fill="#f1f5f9"/><circle cx="38" cy="46" r="4.5" fill="#0f172a"/><circle cx="62" cy="46" r="4.5" fill="#0f172a"/><ellipse cx="50" cy="54" rx="5" ry="3.5" fill="#0f172a"/><path d="M44 62 Q50 70 56 62" stroke="#0f172a" stroke-width="2.5" fill="#f43f5e"/></svg>`,
+                intro: '大家好～我是雲朵！我每天都保持著招牌微笑喔！雖然我的毛常常讓我看起來像巨大的雪球，但我最溫暖人心了！',
+                treats: 0,
+                stats: { cuteness: 100, energy: 90, barking: 55, intelligence: 88 },
+                tips: '薩摩耶毛量極豐富，夏季極度怕熱，必須保持室內涼爽通風避免中暑。'
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        // 3. 渲染狗狗卡片列表
+        function renderDogs() {
+            const grid = document.getElementById('dog-grid');
+            const noResults = document.getElementById('no-results');
+            const searchKeyword = document.getElementById('search-input').value.trim().toLowerCase();
+
+            grid.innerHTML = '';
+
+            const filtered = dogsData.filter(dog => {
+                const matchesFilter = (currentFilter === 'all') || dog.tags.includes(currentFilter);
+                const matchesSearch = dog.name.toLowerCase().includes(searchKeyword) || 
+                                      dog.breed.toLowerCase().includes(searchKeyword) ||
+                                      dog.intro.toLowerCase().includes(searchKeyword);
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                
+                filtered.forEach(dog => {
+                    const card = document.createElement('div');
+                    card.className = 'dog-card bg-white rounded-3xl overflow-hidden shadow-md border-2 border-amber-100 flex flex-col h-full relative';
+                    
+                    card.innerHTML = `
+                        <!-- 頂部頭像圖片區 -->
+                        <div class="h-48 bg-gradient-to-br ${dog.bgGradient} p-4 flex items-center justify-center relative overflow-hidden group cursor-pointer" onclick="openModal('${dog.id}')">
+                            <div class="w-32 h-32 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-md">
+                                ${dog.avatarSvg}
+                            </div>
+                            <span class="absolute top-3 right-3 ${dog.badgeBg} text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                ${dog.badgeText}
+                            </span>
+                        </div>
+
+                        <!-- 卡片內容區 -->
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex items-baseline justify-between mb-1">
+                                <h3 class="text-xl font-bold text-gray-800">${dog.name}</h3>
+                                <span class="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md font-medium border border-amber-200">${dog.breed}</span>
+                            </div>
+
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-grow">
+                                "${dog.intro}"
+                            </p>
+
+                            <!-- 按鈕操作區 -->
+                            <div class="pt-3 border-t border-gray-100 flex flex-col gap-2 mt-auto">
+                                <div class="flex items-center justify-between gap-2">
+                                    <button onclick="petDog('${dog.name}', '${dog.breed}')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95">
+                                        <span>👋</span> 摸摸我
+                                    </button>
+                                    <button onclick="giveTreat(event, '${dog.id}')" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-1 shadow-sm active:scale-95">
+                                        <span>罐罐</span> <span id="treat-count-${dog.id}">${dog.treats}</span>
+                                    </button>
+                                </div>
+                                <button onclick="openModal('${dog.id}')" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold py-1.5 rounded-xl text-xs transition-colors border border-amber-200">
+                                    查看完整詳細小檔案 📊
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // 4. 篩選與搜尋處理
+        function setFilter(tag) {
+            currentFilter = tag;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-amber-500', 'text-white');
+                btn.classList.add('bg-amber-100', 'text-amber-800');
+            });
+            event.currentTarget.classList.add('active', 'bg-amber-500', 'text-white');
+            event.currentTarget.classList.remove('bg-amber-100', 'text-amber-800');
+            renderDogs();
+        }
+
+        function filterDogs() {
+            renderDogs();
+        }
+
+        // 5. 摸摸互動 (Toast + 音效)
+        function petDog(name, breed) {
+            playSound('pet');
+            const reactions = [
+                '開心得瘋狂搖尾巴！ 🐕💨',
+                '舒服到露出了爽快的表情！ 😌',
+                '興奮地在你腳邊繞圈圈～ 🌀',
+                '輕咬你的手套跟你撒嬌 ❤️',
+                '開心地汪了一聲表達感謝！ 🐶🎵'
+            ];
+            const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+            
+            showToast(`你摸了 <b>${name}</b> (${breed})<br><span class="text-amber-200 text-xs">${randomReaction}</span>`);
+        }
+
+        // 6. 送罐罐互動 (粒子特效 + 音效 + 計數)
+        function giveTreat(event, dogId) {
+            playSound('treat');
+            const dog = dogsData.find(d => d.id === dogId);
+            if (!dog) return;
+
+            dog.treats += 1;
+            document.getElementById(`treat-count-${dogId}`).innerText = dog.treats;
+
+            // 更新總計數
+            const totalTreats = dogsData.reduce((sum, item) => sum + item.treats, 0);
+            document.getElementById('total-treats-count').innerText = `${totalTreats} 個`;
+
+            // 生成噴發愛心粒子特效
+            createBurstEffect(event);
+
+            showToast(`成功餵食 <b>${dog.name}</b> 一個香噴噴罐罐 🥫！`);
+        }
+
+        function createBurstEffect(e) {
+            const button = e.currentTarget;
+            const rect = button.getBoundingClientRect();
+            
+            for (let i = 0; i < 6; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'particle-heart';
+                heart.innerText = ['💖', '🥫', '✨', '🐾'][Math.floor(Math.random() * 4)];
+                
+                const tx = (Math.random() - 0.5) * 120 + 'px';
+                const ty = - (Math.random() * 80 + 40) + 'px';
+                const rot = (Math.random() - 0.5) * 60 + 'deg';
+
+                heart.style.setProperty('--tw-translate-x', tx);
+                heart.style.setProperty('--tw-translate-y', ty);
+                heart.style.setProperty('--tw-rotate', rot);
+                heart.style.left = (rect.left + rect.width / 2) + 'px';
+                heart.style.top = (rect.top + rect.height / 2) + 'px';
+
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 800);
+            }
+        }
+
+        // 7. Modal 彈窗與詳細能力評分
+        function openModal(dogId) {
+            playSound('pet');
+            const dog = dogsData.find(d => d.id === dogId);
+            if (!dog) return;
+
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="text-center mb-4">
+                    <div class="w-28 h-28 mx-auto bg-gradient-to-br ${dog.bgGradient} rounded-full p-3 shadow-inner mb-2">
+                        ${dog.avatarSvg}
+                    </div>
+                    <h2 class="text-2xl font-black text-gray-800">${dog.name}</h2>
+                    <p class="text-xs text-amber-700 font-bold">${dog.breed}</p>
+                </div>
+
+                <!-- 能力值指標量表 -->
+                <div class="bg-amber-50 p-4 rounded-2xl mb-4 space-y-2 text-xs font-bold text-gray-700">
+                    <div class="text-amber-900 font-black mb-2 text-sm">📊 狗狗性格能力值：</div>
+                    <div>
+                        <div class="flex justify-between mb-1"><span>可愛指數 ❤️</span><span>${dog.stats.cuteness}%</span></div>
+                        <div class="w-full bg-amber-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-rose-500 h-full rounded-full" style="width: ${dog.stats.cuteness}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1"><span>精力充沛度 ⚡</span><span>${dog.stats.energy}%</span></div>
+                        <div class="w-full bg-amber-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: ${dog.stats.energy}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1"><span>智商指數 🧠</span><span>${dog.stats.intelligence}%</span></div>
+                        <div class="w-full bg-amber-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-blue-500 h-full rounded-full" style="width: ${dog.stats.intelligence}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 飼養小貼士 -->
+                <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-xs text-emerald-900">
+                    <span class="font-bold block mb-1">💡 照顧小叮嚀：</span>
+                    ${dog.tips}
+                </div>
+            `;
+
+            const modal = document.getElementById('dog-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-90');
+            modal.querySelector('.modal-content').classList.add('scale-100');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('dog-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-content').classList.remove('scale-100');
+            modal.querySelector('.modal-content').classList.add('scale-90');
+        }
+
+        // 8. 自訂 Toast 提示
+        function showToast(htmlContent) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-gray-900/90 text-white text-sm px-4 py-3 rounded-2xl shadow-xl toast-enter border border-white/10 backdrop-blur-md flex items-center gap-2 pointer-events-auto';
+            toast.innerHTML = `<div>🐾</div><div>${htmlContent}</div>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // 初始化繪製
+        window.onload = function() {
+            renderDogs();
+        };
     </script>
 </body>
 </html>
